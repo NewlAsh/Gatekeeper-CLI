@@ -1,0 +1,59 @@
+DAY 1 — HTTP Headers + Proxy Without Cache
+------------------------------------------
+Learn and build simultaneously.
+
+First hour (learn):
+- What headers are
+- req.headers, res.set() in Express
+- axios from server side — response.data, response.status, response.headers
+
+Remaining time (build):
+- Set up project, install express + axios + commander
+- Parse --port and --origin using commander
+- Start Express on --port
+- Forward every incoming request to --origin using axios
+- Forward the response back (status + headers + body)
+
+Done when:
+caching-proxy --port 3000 --origin http://dummyjson.com
+forwards requests correctly. No cache yet.
+
+
+DAY 2 — Add Caching
+-------------------
+No new concepts. Pure building.
+
+- Add const cache = new Map()
+- Check cache before forwarding — HIT or MISS
+- Store response in cache after a MISS
+- Set X-Cache header correctly on both paths
+
+Test thoroughly in Postman/Thunder Client:
+- First request → MISS
+- Same request again → HIT
+- Different path → MISS
+
+Done when:
+HIT and MISS work correctly and consistently.
+
+
+DAY 3 — --clear-cache + fs + Polish
+-----------------------------------
+The --clear-cache flag runs as a separate process.
+Your Map is dead by then. Solve it with a file.
+Learn fs.writeFileSync, fs.readFileSync, fs.existsSync.
+
+Build:
+- Write cache to cache.json on every update
+- On server start, load cache.json into memory if it exists
+- --clear-cache deletes cache.json
+
+Then polish:
+- Handle edge cases (origin is down, bad path, etc.)
+- Write README with install + usage instructions
+- Push to GitHub
+
+Done when:
+All three work — server caches, survives restart, clears on command.
+
+=====================================
