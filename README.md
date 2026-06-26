@@ -1,4 +1,4 @@
-# caching-proxy
+# Caching-Proxy
 
 A CLI tool that starts a caching proxy server. Forwards HTTP requests to an origin server, caches the responses, and returns cached responses on repeat requests — with `X-Cache` headers indicating whether the response was a cache hit or miss.
 
