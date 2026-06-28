@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gatekeeper</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0e0e0e;
+      --surface:   #161616;
+      --surface2:  #1c1c1c;
+      --border:    #2a2a2a;
+      --border-strong: #3a3a3a;
+      --text:      #e8e8e6;
+      --text-sec:  #888884;
+      --text-muted:#555552;
+      --green-bg:  #0f2318;
+      --green-txt: #4ade80;
+      --amber-bg:  #231a08;
+      --amber-txt: #fbbf24;
+      --red-bg:    #250f0f;
+      --red-txt:   #f87171;
+      --radius:    8px;
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Inter', sans-serif;
+    }
+
+    html, body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 3.5rem 1.5rem 5rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2.75rem;
+    }
+
+    .logo-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .logo-icon {
+      width: 28px;
+      height: 28px;
+      border: 1.5px solid var(--border-strong);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-icon svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--text-sec);
+      fill: none;
+    }
+
+    .wordmark {
+      font-family: var(--mono);
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+
+    .tagline {
+      font-size: 13px;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 620px;
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .card-top {
+      padding: 1.25rem 1.25rem 0;
+    }
+
+    .origin-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 1rem;
+      padding: 0.55rem 0.75rem;
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .origin-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .origin-value {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-sec);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      padding-bottom: 1.25rem;
+    }
+
+    .path-wrap {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .slash {
+      position: absolute;
+      left: 10px;
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--text-muted);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .path-input {
+      width: 100%;
+      height: 38px;
+      padding: 0 0.75rem 0 22px;
+      font-family: var(--mono);
+      font-size: 13px;
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .path-input:focus { border-color: var(--border-strong); }
+    .path-input::placeholder { color: var(--text-muted); }
+
+    .send-btn {
+      height: 38px;
+      padding: 0 1rem;
+      background: var(--text);
+      color: var(--bg);
+      border: none;
+      border-radius: var(--radius);
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+
+    .send-btn:hover { opacity: 0.85; }
+    .send-btn:active { opacity: 0.7; transform: scale(0.98); }
+    .send-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+    .send-btn svg {
+      width: 13px;
+      height: 13px;
+      stroke: currentColor;
+      fill: none;
+      flex-shrink: 0;
+    }
+
+    .divider { height: 0.5px; background: var(--border); }
+
+    .response-area {
+      padding: 1rem 1.25rem;
+      min-height: 220px;
+    }
+
+    .response-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 0.75rem;
+      height: 22px;
+    }
+
+    .badge {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 7px;
+      border-radius: 4px;
+    }
+
+    .badge-hit  { background: var(--green-bg); color: var(--green-txt); }
+    .badge-miss { background: var(--amber-bg); color: var(--amber-txt); }
+    .badge-err  { background: var(--red-bg);   color: var(--red-txt);   }
+
+    .status-code {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .elapsed {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-left: auto;
+    }
+
+    .json-scroll {
+      max-height: 360px;
+      overflow-y: auto;
+      border-radius: var(--radius);
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+
+    .json-output {
+      padding: 0.9rem 1rem;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.75;
+      color: var(--text-sec);
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 180px;
+      gap: 8px;
+    }
+
+    .empty-icon {
+      width: 32px;
+      height: 32px;
+      border: 1px dashed var(--border-strong);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .empty-icon svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--text-muted);
+      fill: none;
+    }
+
+    .empty-label {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 1.5px solid var(--border-strong);
+      border-top-color: var(--text);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .footer-row {
+      padding: 0.75rem 1.25rem;
+      border-top: 0.5px solid var(--border);
+    }
+
+    .hint {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .hint span { color: var(--text-sec); }
+
+    @media (max-width: 480px) {
+      body { padding: 2rem 1rem 3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo-row">
+      <div class="logo-icon">
+        <svg viewBox="0 0 16 16" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="5" height="5" rx="1"/>
+          <rect x="9" y="2" width="5" height="5" rx="1"/>
+          <rect x="2" y="9" width="5" height="5" rx="1"/>
+          <path d="M9 11.5h5M11.5 9v5"/>
+        </svg>
+      </div>
+      <span class="wordmark">Gatekeeper</span>
+    </div>
+    <p class="tagline">HTTP caching proxy</p>
+  </header>
+
+  <div class="card">
+    <div class="card-top">
+
+      <div class="origin-row">
+        <span class="origin-label">origin</span>
+        <span class="origin-value">https://gatekeeper-cli-production.up.railway.app</span>
+      </div>
+
+      <div class="input-row">
+        <div class="path-wrap">
+          <span class="slash">/</span>
+          <input
+            class="path-input"
+            id="path-input"
+            type="text"
+            placeholder="products/1"
+            autocomplete="off"
+            spellcheck="false"
+          />
+        </div>
+        <button class="send-btn" id="send-btn" onclick="sendRequest()">
+          <svg viewBox="0 0 16 16" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 8h10M9 4l4 4-4 4"/>
+          </svg>
+          Send
+        </button>
+      </div>
+
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="response-area">
+
+      <div class="response-meta" id="meta-row" style="display:none;">
+        <span class="badge" id="cache-badge"></span>
+        <span class="status-code" id="status-code"></span>
+        <span class="elapsed" id="elapsed"></span>
+      </div>
+
+      <div id="empty-state" class="empty-state">
+        <div class="empty-icon">
+          <svg viewBox="0 0 16 16" stroke-width="1.5" stroke-linecap="round">
+            <circle cx="8" cy="8" r="5"/>
+            <path d="M8 5v3l2 1"/>
+          </svg>
+        </div>
+        <span class="empty-label">waiting for a request</span>
+      </div>
+
+      <div id="loading-state" class="empty-state" style="display:none;">
+        <div class="spinner"></div>
+        <span class="empty-label">forwarding request...</span>
+      </div>
+
+      <div id="json-wrap" class="json-scroll" style="display:none;">
+        <pre class="json-output" id="json-output"></pre>
+      </div>
+
+    </div>
+
+    <div class="footer-row">
+      <span class="hint">try <span>/products</span> · <span>/products/1</span> · <span>/users</span> · <span>/carts</span></span>
+    </div>
+  </div>
+
+  <script>
+    const BASE = 'https://gatekeeper-cli-production.up.railway.app';
+
+    const pathInput = document.getElementById('path-input');
+    const sendBtn   = document.getElementById('send-btn');
+    const emptyState   = document.getElementById('empty-state');
+    const loadingState = document.getElementById('loading-state');
+    const jsonWrap     = document.getElementById('json-wrap');
+    const jsonOutput   = document.getElementById('json-output');
+    const metaRow      = document.getElementById('meta-row');
+    const cacheBadge   = document.getElementById('cache-badge');
+    const statusCode   = document.getElementById('status-code');
+    const elapsedEl    = document.getElementById('elapsed');
+
+    pathInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') sendRequest();
+    });
+
+    async function sendRequest() {
+      const raw  = pathInput.value.trim().replace(/^\/+/, '');
+      const path = raw ? '/' + raw : '/';
+      const url  = BASE + path;
+
+      sendBtn.disabled = true;
+      emptyState.style.display   = 'none';
+      jsonWrap.style.display     = 'none';
+      metaRow.style.display      = 'none';
+      loadingState.style.display = 'flex';
+
+      const t0 = performance.now();
+
+      try {
+        const res     = await fetch(url);
+        const elapsed = Math.round(performance.now() - t0);
+        const cache   = res.headers.get('x-cache') || 'MISS';
+        const json    = await res.json();
+
+        loadingState.style.display = 'none';
+        jsonWrap.style.display     = 'block';
+        metaRow.style.display      = 'flex';
+
+        cacheBadge.className  = 'badge ' + (cache === 'HIT' ? 'badge-hit' : 'badge-miss');
+        cacheBadge.textContent = cache;
+        statusCode.textContent = res.status + ' ' + res.statusText;
+        elapsedEl.textContent  = elapsed + 'ms';
+        jsonOutput.textContent = JSON.stringify(json, null, 2);
+
+      } catch (err) {
+        const elapsed = Math.round(performance.now() - t0);
+
+        loadingState.style.display = 'none';
+        jsonWrap.style.display     = 'block';
+        metaRow.style.display      = 'flex';
+
+        cacheBadge.className   = 'badge badge-err';
+        cacheBadge.textContent = 'ERROR';
+        statusCode.textContent = err.message;
+        elapsedEl.textContent  = elapsed + 'ms';
+        jsonOutput.textContent = JSON.stringify({ error: err.message }, null, 2);
+      } finally {
+        sendBtn.disabled = false;
+      }
+    }
+  </script>
+
+</body>
+</html>

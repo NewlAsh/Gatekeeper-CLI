@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
 const {program} = require('commander');
@@ -19,8 +20,8 @@ if(options.clearCache) {
     process.exit(0);
 }
 
-const PORT = options.port;
-let originUrl = options.origin;
+const PORT = options.port || process.env.PORT;
+let originUrl = options.origin || process.env.originUrl;
 
 // Forcing origin to HTTPS if it isn't already, dummyjson requires SSL
 if (originUrl && originUrl.startsWith('http://')) {
