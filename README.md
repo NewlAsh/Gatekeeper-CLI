@@ -5,7 +5,7 @@ A CLI tool that starts a caching proxy server. Forwards HTTP requests to an orig
 Built with Node.js, Express, and axios.
 
 It's live now.
-It works for dummyjson.com for origin_url.
+It works for dummyjson.com as the origin_url.
 Planning to upgrade.
 
 https://gatekeeper-cli-beta.vercel.app/
