@@ -20,7 +20,7 @@ if(options.clearCache) {
 }
 
 const PORT = options.port || process.env.PORT;
-let originUrl = options.origin || process.env.originUrl;
+let originUrl = options.origin || process.env.ORIGIN_URL;
 
 // Forcing origin to HTTPS if it isn't already, dummyjson requires SSL
 if (originUrl && originUrl.startsWith('http://')) {
